@@ -1,6 +1,7 @@
 package kr.co.searchAPI.regionproject.serivce;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.web.multipart.MultipartFile;
 
@@ -12,6 +13,7 @@ public interface RegionProjectService {
 
 	List<RegionDTO> allFindRegion();
 
-	List<RegionDTO> findAllByRegion(String keyword);
+	String getRegCode();
 
+	List<RegionDTO> selectRegion(Map<String, Object> params);
 }

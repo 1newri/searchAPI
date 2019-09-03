@@ -5,6 +5,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
 import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
@@ -17,15 +19,19 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name="Regions")
+@Table(name="Regions_info")
 public class RegionDTO {
 	
 	@Id
 	@Column(name="c_region_seq")
-	private Long regionSeq;						//구분
+	private Long regionSeq;					//구분
 	
-	@Column(name="c_region")
-	private String region;					//지자체명
+	@Column(name="c_region_cd")
+	@JoinColumns({
+		@JoinColumn(name="c_region_cd",
+				referencedColumnName = "region_cd")
+	})
+	private String regionCd;				//지자체코드
 	
 	@Column(name="c_target")
 	private String target;					//지원대상
@@ -48,4 +54,9 @@ public class RegionDTO {
 	@Column(name="c_reception")
 	private String reception;				//취급점
 	
+	@Column(name="c_insert_date")
+	private String insertDate;				//생성일자
+	
+	@Column(name="c_update_date")
+	private String updateDate;				//수정일자
 }

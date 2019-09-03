@@ -1,7 +1,8 @@
-package kr.co.searchAPI.common;
+package kr.co.searchAPI.common.util;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,7 +24,8 @@ public class FileController {
 			@RequestParam String msg,
 			@RequestParam MultipartFile[] files
 			) throws Exception{
-		log.info("파일 업로드 시작 Start ", msg);
+		log.info("readFile msg : {} ", msg);
+		log.info("readFile MultipartFile.length : {} ", files.length);
 		
 		String result = "";
 		

@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,24 +25,49 @@ public class RegionProjectController {
 	RegionProjectService regionProjectService;
 	
 	@PostMapping("/search")
-	public Map<String,List<RegionDTO>> regionSearch(
-			@RequestParam String keyword
+	public List<RegionDTO> regionSearch(
+			@RequestBody Map<String, Object> params
 			){
 		
 		Map<String,List<RegionDTO>> resultMap = new HashMap<String, List<RegionDTO>>();
 		List<RegionDTO> list = new ArrayList<RegionDTO>();
+		/*
+		 * String keyword = ""; boolean isKey = params.containsKey("region"); if(isKey)
+		 * { keyword = (String)params.get("region"); }
+		 * 
+		 * if(!"".equals(keyword)) { list =
+		 * regionProjectService.findAllByRegion(keyword); }else { list =
+		 * regionProjectService.allFindRegion(); }
+		 */
 		
-		if(!"".equals(keyword)) {
-			list = regionProjectService.findAllByRegion(keyword);
-		}else {
-			list = regionProjectService.allFindRegion();
-		}
+		list = regionProjectService.selectRegion(params);
 		
 		if(list.size() > 0) {
 			resultMap.put("regions", list);
 		}
 		
-		return resultMap;
+		return list;
 	}
 	
+	
+	@PostMapping("/edit")
+	public List<RegionDTO> regionUpdate(
+			@RequestBody Map<String, Object> params
+			){
+		
+		Map<String,List<RegionDTO>> resultMap = new HashMap<String, List<RegionDTO>>();
+		List<RegionDTO> list = new ArrayList<RegionDTO>();
+		String keyword = "";
+		boolean isKey = params.containsKey("region");
+		if(isKey) {
+			keyword = (String)params.get("region");
+		}
+		
+		
+		if(list.size() > 0) {
+			resultMap.put("regions", list);
+		}
+		
+		return list;
+	}
 }

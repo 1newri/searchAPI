@@ -1,4 +1,4 @@
-package kr.co.searchAPI.regionproject;
+package kr.co.searchAPI.regionproject.repository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +28,7 @@ public class RegionRepositoryTest {
 		
 		RegionDTO regionDTO = RegionDTO.builder()
 				.regionSeq((long) 9999)
-				.region("지자체명")
+//				.region("지자체명")
 				.target("지원대상")
 				.usage("용도")
 				.limit("지원한도")
@@ -52,9 +52,10 @@ public class RegionRepositoryTest {
 	@Test
 	public void testfindAllByRegion() {
 		List<RegionDTO> list = new ArrayList<RegionDTO>();
-		list = regionRepository.findAllByRegion("강릉시");
-		for(RegionDTO dto : list) {
-			log.info(dto.toString());
+		
+//		list = regionRepository.findAllByRegion("강릉시");
+		for(RegionDTO tt : list) {
+			log.info(tt.toString());
 		}	
 	}
 	
