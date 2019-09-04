@@ -31,9 +31,11 @@ public class RegionProjectServiceImpl implements RegionProjectService{
 	@Autowired
 	RegionCdRepository regionCdRepository;
 	
+	String date = DateUtil.getTime();
 	
-	ArrayList<String> numList = new ArrayList<String>();
-	
+	/**
+	 *  데이터 파일에서 각 레코드를 데이터베이스에 저장
+	 */
 	@Override
 	public boolean readFile(MultipartFile[] files) {
 		
@@ -43,6 +45,8 @@ public class RegionProjectServiceImpl implements RegionProjectService{
 		BufferedReader br = null;
 		
 		try {
+			
+			
 			
 			for(MultipartFile file : files) {
 				log.info("regionProjectService file: {}", file.getOriginalFilename());
@@ -64,7 +68,7 @@ public class RegionProjectServiceImpl implements RegionProjectService{
 							
 							
 							String[] arr = line.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)", -1);
-							String regCode = getRegCode();
+							String regCode = getRegCode(arr[0]);
 							
 							RegionCdDTO cdDTO = RegionCdDTO.builder()
 									.regionCd(regCode)
@@ -86,7 +90,7 @@ public class RegionProjectServiceImpl implements RegionProjectService{
 									.institute(arr[6])
 									.mgmt(arr[7])
 									.reception(arr[8])
-									.insertDate(DateUtil.getTime())
+									.insertDate(date)
 									.build();
 							
 							if(regionDTO != null) {
@@ -107,43 +111,49 @@ public class RegionProjectServiceImpl implements RegionProjectService{
 			
 			
 		} catch (Exception e) {
+			e.printStackTrace();
 			result = false;
 			log.info("readFile("+result+") : " + "Error!");
 		}
 		return result;
 	}
 
-	@Override
-	public List<RegionDTO> allFindRegion() {
-
-		return regionRepository.findAll();
-	}
-
-	public String getRegCode() {
-		String regCode = "reg";
+	public String getRegCode(String seq) {
+		String order =  String.format("%04d", Integer.parseInt(seq));
 		
-		int random = (int)(Math.random()*9000)+1000;
-		regCode += String.valueOf(random);
+		String regCode = "reg" + order;
 		
 		return regCode;
 	}
 
+	/**
+	 *	 지원하는 지자체 목록 출력 및 지자체명을 입력 받아 지자체의 지원정보 출력 
+	 */
 	@Override
 	public List<RegionDTO> selectRegion(Map<String, Object> params) {
 		List<RegionDTO> list = null;
 		
-		if(params == null) {
+		
+		if(params.size() == 0) {
 			list = regionRepository.findAll();
 		}else {
+			// Join으로 대체
 			String keyword = (String)params.get("region");
 			RegionCdDTO cdDto = regionCdRepository.findByRegion(keyword);
-			if(cdDto != null) {
-				String regionCd = cdDto.getRegionCd();
-				list = regionRepository.findByRegionCd(regionCd);
-			}
+			
+			list = regionRepository.findByRegionCdDto(cdDto);
 		}
 		
 		return list;
+	}
+
+	@Override
+	public void regionUpdate(RegionDTO regionDTO) {
+		
+		regionDTO.setUpdateDate(date);
+
+		regionRepository.saveRegionCd(regionDTO);
+		
 	}
 
 }

@@ -1,7 +1,5 @@
 package kr.co.searchAPI.regionproject.repository;
 
-import java.util.Map;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

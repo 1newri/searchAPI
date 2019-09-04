@@ -11,9 +11,7 @@ public interface RegionProjectService {
 
 	boolean readFile(MultipartFile[] files);
 
-	List<RegionDTO> allFindRegion();
-
-	String getRegCode();
-
 	List<RegionDTO> selectRegion(Map<String, Object> params);
+
+	void regionUpdate(RegionDTO regionDTO);
 }

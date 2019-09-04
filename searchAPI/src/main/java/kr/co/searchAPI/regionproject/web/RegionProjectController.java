@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,14 +32,6 @@ public class RegionProjectController {
 		
 		Map<String,List<RegionDTO>> resultMap = new HashMap<String, List<RegionDTO>>();
 		List<RegionDTO> list = new ArrayList<RegionDTO>();
-		/*
-		 * String keyword = ""; boolean isKey = params.containsKey("region"); if(isKey)
-		 * { keyword = (String)params.get("region"); }
-		 * 
-		 * if(!"".equals(keyword)) { list =
-		 * regionProjectService.findAllByRegion(keyword); }else { list =
-		 * regionProjectService.allFindRegion(); }
-		 */
 		
 		list = regionProjectService.selectRegion(params);
 		
@@ -50,24 +43,25 @@ public class RegionProjectController {
 	}
 	
 	
-	@PostMapping("/edit")
-	public List<RegionDTO> regionUpdate(
-			@RequestBody Map<String, Object> params
+	@PostMapping("/edit/{regionCd}")
+	public RegionDTO regionUpdate(
+			@RequestBody Map<String, Object> params,
+			@PathVariable String regionCd
 			){
 		
-		Map<String,List<RegionDTO>> resultMap = new HashMap<String, List<RegionDTO>>();
-		List<RegionDTO> list = new ArrayList<RegionDTO>();
-		String keyword = "";
-		boolean isKey = params.containsKey("region");
-		if(isKey) {
-			keyword = (String)params.get("region");
-		}
+		RegionDTO regionDTO = RegionDTO.builder()
+				.regionCd(regionCd)
+				.target((String) params.get("target"))
+				.usage((String) params.get("usage"))
+				.limit((String) params.get("limit"))
+				.rate((String) params.get("rate"))
+				.institute((String) params.get("institute"))
+				.mgmt((String) params.get("mgmt"))
+				.reception((String) params.get("reception"))
+				.build();
+
+		regionProjectService.regionUpdate(regionDTO);
 		
-		
-		if(list.size() > 0) {
-			resultMap.put("regions", list);
-		}
-		
-		return list;
+		return regionDTO;
 	}
 }

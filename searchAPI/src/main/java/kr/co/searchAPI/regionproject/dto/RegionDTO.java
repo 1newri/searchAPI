@@ -1,12 +1,11 @@
 package kr.co.searchAPI.regionproject.dto;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
@@ -19,7 +18,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name="Regions_info")
+@Table(name="tb_region_info")
 public class RegionDTO {
 	
 	@Id
@@ -27,11 +26,7 @@ public class RegionDTO {
 	private Long regionSeq;					//구분
 	
 	@Column(name="c_region_cd")
-	@JoinColumns({
-		@JoinColumn(name="c_region_cd",
-				referencedColumnName = "region_cd")
-	})
-	private String regionCd;				//지자체코드
+	private String regionCd;				//지역코드
 	
 	@Column(name="c_target")
 	private String target;					//지원대상
@@ -59,4 +54,11 @@ public class RegionDTO {
 	
 	@Column(name="c_update_date")
 	private String updateDate;				//수정일자
+	
+	@OneToOne
+	@JoinColumn(name="c_region_cd",
+			insertable = false,
+			updatable = false
+			)
+	private RegionCdDTO regionCdDto;			// 코드테이블
 }

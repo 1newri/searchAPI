@@ -169,10 +169,41 @@ public class RegionProjectTest {
 		return url;
 	}
 	
+	/**
+	 * 지원하는 지자체 정보 수정 API
+	 */
 	@Test
-	public void testRandom() {
-		String test = regionProjectService.getRegCode();
-		System.out.println(test);
+	@Ignore
+	public void updateRegion() {
+		
+		log.info("지원하는 지자체명을 입력받아 해당 지자체의 지원정보를 출력하는 API");
+		
+		assertNotNull(app);
+		log.info("로딩된 빈 갯수 : {} ", app.getBeanDefinitionCount());
+		
+		String subUrl = "/region/edit/reg0001";
+		URI url = testUrl(subUrl);
+		
+		MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
+		parameters.add("keyword", "강릉시");
+		
+		// 객체 전달?
+		// 파라미터 전달..?!
+		
+		HttpHeaders headers = new HttpHeaders();
+		//headers.add("x-waple-authorization", "API키값");
+		
+		HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(parameters, headers);
+		
+		ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
+		
+		log.info("statusCode : {} ", response.getStatusCodeValue());
+		log.info("getBody: {} ", response.getBody());
+		
+		assertTrue(true); 
+		
 	}
+	
+	
 
 }
