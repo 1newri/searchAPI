@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import kr.co.searchAPI.regionproject.dto.RegionCdDTO;
 import kr.co.searchAPI.regionproject.dto.RegionDTO;
 import kr.co.searchAPI.regionproject.serivce.RegionProjectService;
 import lombok.extern.slf4j.Slf4j;
@@ -27,41 +28,29 @@ public class RegionProjectController {
 	
 	@PostMapping("/search")
 	public List<RegionDTO> regionSearch(
-			@RequestBody Map<String, Object> params
+			@RequestBody RegionCdDTO cdDto
 			){
 		
-		Map<String,List<RegionDTO>> resultMap = new HashMap<String, List<RegionDTO>>();
 		List<RegionDTO> list = new ArrayList<RegionDTO>();
 		
-		list = regionProjectService.selectRegion(params);
-		
-		if(list.size() > 0) {
-			resultMap.put("regions", list);
-		}
+		list = regionProjectService.selectRegion(cdDto);
 		
 		return list;
 	}
 	
 	
 	@PostMapping("/edit/{regionCd}")
-	public RegionDTO regionUpdate(
-			@RequestBody Map<String, Object> params,
+	public Map<String, String> regionUpdate(
+			@RequestBody RegionDTO regionDTO,
 			@PathVariable String regionCd
 			){
 		
-		RegionDTO regionDTO = RegionDTO.builder()
-				.regionCd(regionCd)
-				.target((String) params.get("target"))
-				.usage((String) params.get("usage"))
-				.limit((String) params.get("limit"))
-				.rate((String) params.get("rate"))
-				.institute((String) params.get("institute"))
-				.mgmt((String) params.get("mgmt"))
-				.reception((String) params.get("reception"))
-				.build();
-
-		regionProjectService.regionUpdate(regionDTO);
+		regionDTO.setRegionCd(regionCd);
 		
-		return regionDTO;
+		Map<String, String> resultMap = regionProjectService.regionUpdate(regionDTO);
+		
+		return resultMap;
 	}
+	
+	
 }

@@ -3,10 +3,14 @@ package kr.co.searchAPI.regionproject.dto;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.DynamicUpdate;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,11 +22,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @Entity
+@DynamicUpdate
 @Table(name="tb_region_info")
 public class RegionDTO {
 	
 	@Id
 	@Column(name="c_region_seq")
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long regionSeq;					//구분
 	
 	@Column(name="c_region_cd")

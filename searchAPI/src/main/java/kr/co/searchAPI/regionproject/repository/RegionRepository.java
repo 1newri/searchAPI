@@ -16,13 +16,6 @@ public interface RegionRepository  extends JpaRepository<RegionDTO, Long>{
 
 	List<RegionDTO> findByRegionCdDto(RegionCdDTO cdDto);
 
-	@Modifying
-	@Query(value = " UPDATE tb_region_info "
-				+ " SET c_target = :regionDTO.target, "
-				+ " c_usage = :regionDTO.usage "
-				+ " WHERE c_region_cd = :regionDTO.regionCd"
-				, nativeQuery = true
-			)
-	void saveRegionCd(@Param("regionDTO") RegionDTO regionDTO);
-
+	RegionDTO findByRegionCd(String regionCd);
+	
 }

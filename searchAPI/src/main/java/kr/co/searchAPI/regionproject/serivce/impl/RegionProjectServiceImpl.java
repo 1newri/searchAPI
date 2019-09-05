@@ -5,14 +5,20 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.multipart.MultipartFile;
 
+import kr.co.searchAPI.common.util.BeanUtil;
 import kr.co.searchAPI.common.util.DateUtil;
 import kr.co.searchAPI.regionproject.dto.RegionCdDTO;
 import kr.co.searchAPI.regionproject.dto.RegionDTO;
@@ -46,7 +52,7 @@ public class RegionProjectServiceImpl implements RegionProjectService{
 		
 		try {
 			
-			
+			int cnt = 0 ;
 			
 			for(MultipartFile file : files) {
 				log.info("regionProjectService file: {}", file.getOriginalFilename());
@@ -65,10 +71,8 @@ public class RegionProjectServiceImpl implements RegionProjectService{
 						if(first) {
 							first = false;
 						}else {
-							
-							
 							String[] arr = line.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)", -1);
-							String regCode = getRegCode(arr[0]);
+							String regCode = getRegCode(cnt);
 							
 							RegionCdDTO cdDTO = RegionCdDTO.builder()
 									.regionCd(regCode)
@@ -81,7 +85,6 @@ public class RegionProjectServiceImpl implements RegionProjectService{
 							}
 							
 							RegionDTO regionDTO = RegionDTO.builder()
-									.regionSeq(Long.parseLong(arr[0]))
 									.regionCd(regCode)
 									.target(arr[2])
 									.usage(arr[3])
@@ -97,8 +100,8 @@ public class RegionProjectServiceImpl implements RegionProjectService{
 								log.info("regionRepository.save {} :", regionDTO.toString());
 								regionRepository.save(regionDTO);
 							}
-							
 						}
+						cnt ++;
 					}
 					result = true;
 					log.info("readFile("+result+") : " + "Success!");
@@ -118,8 +121,8 @@ public class RegionProjectServiceImpl implements RegionProjectService{
 		return result;
 	}
 
-	public String getRegCode(String seq) {
-		String order =  String.format("%04d", Integer.parseInt(seq));
+	public String getRegCode(int seq) {
+		String order =  String.format("%04d", seq);
 		
 		String regCode = "reg" + order;
 		
@@ -130,29 +133,52 @@ public class RegionProjectServiceImpl implements RegionProjectService{
 	 *	 지원하는 지자체 목록 출력 및 지자체명을 입력 받아 지자체의 지원정보 출력 
 	 */
 	@Override
-	public List<RegionDTO> selectRegion(Map<String, Object> params) {
+	public List<RegionDTO> selectRegion(RegionCdDTO cdDto) {
 		List<RegionDTO> list = null;
 		
-		
-		if(params.size() == 0) {
+		if("".equals(cdDto.getRegion()) || cdDto.getRegion() == null) {
 			list = regionRepository.findAll();
 		}else {
 			// Join으로 대체
-			String keyword = (String)params.get("region");
-			RegionCdDTO cdDto = regionCdRepository.findByRegion(keyword);
-			
+			String region = cdDto.getRegion();
+			cdDto = regionCdRepository.findByRegion(region);
 			list = regionRepository.findByRegionCdDto(cdDto);
 		}
 		
 		return list;
 	}
 
+	/**
+	 *	 지원하는 지자체 정보 수정
+	 */
 	@Override
-	public void regionUpdate(RegionDTO regionDTO) {
+	public Map<String, String> regionUpdate(RegionDTO regionParam) {
 		
-		regionDTO.setUpdateDate(date);
-
-		regionRepository.saveRegionCd(regionDTO);
+		Map<String, String> result = new HashMap<String, String>(); 
+		
+		regionParam.setUpdateDate(date);
+		RegionDTO region =  regionRepository.findByRegionCd(regionParam.getRegionCd());
+		
+		if(region != null) {
+			BeanUtil.copyNonNullProperties(regionParam, region);
+			try {
+				region = regionRepository.save(region);
+				if(region == null) {
+					result.put("msg", "지원하는 지자체 정보 수정 오류발생");
+				}else {
+					result.put("msg", "지원하는 지자체 정보 수정 성공");
+					log.info("지원하는 지자체 정보 수정 성공 : {}", region);
+				}
+			} catch (Exception e) {
+				result.put("msg", "지원하는 지자체 정보 수정 오류발생");
+				log.info("지원하는 지자체 정보 수정 오류 : {} ", e);
+			}
+		}else {
+			result.put("msg", "지원하는 지자체 정보 수정 오류발생");
+			log.info("지원하는 지자체 정보 수정 오류 : {} ");
+		}
+		
+		return result;
 		
 	}
 
