@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import kr.co.searchAPI.ecosystem.service.EcoSystemProjectService;
+import kr.co.searchAPI.housing.service.HousiongProjectService;
 import kr.co.searchAPI.regionproject.serivce.RegionProjectService;
 import lombok.extern.slf4j.Slf4j;
 
@@ -18,6 +20,12 @@ public class FileController {
 	
 	@Autowired
 	RegionProjectService regionProjectService;
+	
+	@Autowired
+	EcoSystemProjectService ecoSystemProjectService;
+	
+	@Autowired
+	HousiongProjectService housiongProjectService;
 
 	@PostMapping("/upload")
 	public String upload(
@@ -38,10 +46,11 @@ public class FileController {
 			}else {
 				result = "Fail";
 			}
-		}else if("".equals(msg)) {
+		}else if("Ecosystem".equals(msg)) {
+			isResult = ecoSystemProjectService.readFile(files);
 			
-		}else if("".equals(msg)) {
-			
+		}else if("Housing".equals(msg)) {
+			isResult = housiongProjectService.readFile(files);
 		}else {
 			log.info("");
 		}
